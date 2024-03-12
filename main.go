@@ -34,7 +34,7 @@ func main() {
 
 	}
 	// save image
-	file, err := os.Create("out.png")
+	file, err := os.Create("img/out.png")
 	if err != nil {
 		fmt.Println(err)
 		os.Exit(1)
