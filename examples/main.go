@@ -26,3 +26,9 @@ func SavePNG(path string, img image.Image) (err error) {
 	png.Encode(file, img)
 	return
 }
+
+func main() {
+	line()
+	rect()
+	circle()
+}

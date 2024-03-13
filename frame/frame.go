@@ -98,3 +98,39 @@ func (f Frame) FillRectangle(x0, y0, x1, y1 int, color color.Color) {
 		}
 	}
 }
+
+func (f Frame) FillCircle(x0, y0, r int, color color.Color) {
+	maxX := x0 + r
+	minX := x0 - r
+	maxY := y0 + r
+	minY := y0 - r
+	for y := minY; y <= maxY; y++ {
+		for x := minX; x <= maxX; x++ {
+			dx := x - x0
+			dy := y - y0
+			dSquare := dx*dx + dy*dy
+			if dSquare <= r*r {
+				f.SetPixel(x, y, color)
+			}
+		}
+	}
+}
+
+func (f Frame) DrawCircle(x0, y0, r int, color color.Color) {
+	maxX := x0 + r
+	minX := x0 - r
+	maxY := y0 + r
+	minY := y0 - r
+
+	for y := minY; y <= maxY; y++ {
+		for x := minX; x <= maxX; x++ {
+			dx := x - x0
+			dy := y - y0
+			dSquare := dx*dx + dy*dy
+			d := (dSquare - r*r)
+			if d <= r && d >= -r {
+				f.SetPixel(x, y, color)
+			}
+		}
+	}
+}

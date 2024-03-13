@@ -11,8 +11,8 @@ import (
 )
 
 const (
-	WIDTH  = 80
-	HEIGHT = 60
+	WIDTH  = 800
+	HEIGHT = 600
 )
 
 func main() {
@@ -25,13 +25,10 @@ func main() {
 	{
 		f.Fill(frame.WHITE)
 
-		f.SetPixel(10, 10, frame.RED)
-		f.SetPixel(10, 50, frame.RED)
-		f.SetPixel(50, 10, frame.RED)
-		f.SetPixel(50, 50, frame.RED)
-		// f.FillRectangle(10, 10, 50, 50, frame.GREEN)
-		f.FillRectangle(50, 50, 10, 10, frame.GREEN)
-		// f.DrawRectangle(10, 10, 50, 50, frame.BLUE)
+		f.FillCircle(WIDTH/2, HEIGHT/2, 200, frame.GREEN)
+		f.DrawCircle(WIDTH/2, HEIGHT/2, 250, frame.BLUE)
+		f.SetPixel(WIDTH/2, HEIGHT/2, frame.RED)
+
 	}
 	// save image
 	file, err := os.Create("img/out.png")
@@ -42,6 +39,3 @@ func main() {
 	png.Encode(file, img)
 
 }
-
-// todo: drawCircle
-// todo: fillCircle

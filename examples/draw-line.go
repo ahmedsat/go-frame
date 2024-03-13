@@ -7,7 +7,7 @@ import (
 	"github.com/ahmedsat/go-frame/frame"
 )
 
-func main() {
+func line() {
 
 	const (
 		WIDTH  = 800
