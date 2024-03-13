@@ -11,27 +11,27 @@ import (
 )
 
 const (
-	WIDTH  = 800
-	HEIGHT = 600
+	WIDTH  = 80
+	HEIGHT = 60
 )
 
 func main() {
+
 	img := image.NewRGBA(image.Rect(0, 0, WIDTH, HEIGHT))
-	f := frame.NewFrame(WIDTH, HEIGHT, func(x, y int64, c color.Color) {
-		img.Set(int(x), int(y), c)
+	f := frame.NewFrame(WIDTH, HEIGHT, func(x, y int, c color.Color) {
+		img.Set(x, y, c)
 	})
 
 	{
 		f.Fill(frame.WHITE)
-		f.DrawLine(0, 0, WIDTH, HEIGHT, frame.RED)
-		f.DrawLine(WIDTH, 0, 0, HEIGHT, frame.RED)
 
-		f.DrawLine(0, 0, WIDTH/4, HEIGHT, frame.GREEN)
-		f.DrawLine(0, 0, WIDTH, HEIGHT/4, frame.GREEN)
-
-		f.DrawLine(WIDTH/2, 0, WIDTH/2, HEIGHT, frame.BLUE)
-		f.DrawLine(0, HEIGHT/2, WIDTH, HEIGHT/2, frame.BLUE)
-
+		f.SetPixel(10, 10, frame.RED)
+		f.SetPixel(10, 50, frame.RED)
+		f.SetPixel(50, 10, frame.RED)
+		f.SetPixel(50, 50, frame.RED)
+		// f.FillRectangle(10, 10, 50, 50, frame.GREEN)
+		f.FillRectangle(50, 50, 10, 10, frame.GREEN)
+		// f.DrawRectangle(10, 10, 50, 50, frame.BLUE)
 	}
 	// save image
 	file, err := os.Create("img/out.png")
@@ -42,3 +42,6 @@ func main() {
 	png.Encode(file, img)
 
 }
+
+// todo: drawCircle
+// todo: fillCircle
