@@ -31,4 +31,5 @@ func main() {
 	line()
 	rect()
 	circle()
+	triangle()
 }
