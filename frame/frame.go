@@ -2,6 +2,8 @@ package frame
 
 import (
 	"image/color"
+
+	Int "github.com/ahmedsat/go-frame/math/int"
 )
 
 type drawPixel func(x, y int, color color.Color)
@@ -29,11 +31,7 @@ func (f *Frame) UpdateDrawer(draw drawPixel) {
 }
 
 func (f Frame) Fill(color color.Color) {
-	for y := int(0); y < f.height; y++ {
-		for x := int(0); x < f.width; x++ {
-			f.SetPixel(x, y, color)
-		}
-	}
+	f.FillRectangle(0, 0, f.width, f.height, color)
 }
 
 func (f Frame) DrawLine(x0, y0, x1, y1 int, color color.Color) {
@@ -133,4 +131,33 @@ func (f Frame) DrawCircle(x0, y0, r int, color color.Color) {
 			}
 		}
 	}
+}
+
+func (f Frame) DrawTriangle(x1, y1, x2, y2, x3, y3 int, color color.Color) {
+	f.DrawLine(x1, y1, x2, y2, color)
+	f.DrawLine(x1, y1, x3, y3, color)
+	f.DrawLine(x3, y3, x2, y2, color)
+}
+func (f Frame) FillTriangle(x1, y1, x2, y2, x3, y3 int, color color.Color) {
+	maxX := max(x1, x2, x3)
+	minX := min(x1, x2, x3)
+	maxY := max(y1, y2, y3)
+	minY := min(y1, y2, y3)
+
+	v1 := Int.Vec2{x1, y1}
+	v2 := Int.Vec2{x2, y2}
+	v3 := Int.Vec2{x3, y3}
+
+	for y := minY; y <= maxY; y++ {
+		for x := minX; x <= maxX; x++ {
+			p := Int.Vec2{x, y}
+			t1 := p.RightTo(v1, v2)
+			t2 := p.RightTo(v2, v3)
+			t3 := p.RightTo(v3, v1)
+			if t1 && t2 && t3 {
+				f.SetPixel(x, y, color)
+			}
+		}
+	}
+
 }

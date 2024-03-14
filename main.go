@@ -25,8 +25,8 @@ func main() {
 	{
 		f.Fill(frame.WHITE)
 
-		f.FillCircle(WIDTH/2, HEIGHT/2, 200, frame.GREEN)
-		f.DrawCircle(WIDTH/2, HEIGHT/2, 250, frame.BLUE)
+		f.DrawTriangle(WIDTH/2, HEIGHT/5, WIDTH*4/5, HEIGHT*4/5, WIDTH/5, HEIGHT*4/5, frame.GREEN)
+		f.FillTriangle(WIDTH/2, HEIGHT/4, WIDTH*3/4, HEIGHT*3/4, WIDTH/4, HEIGHT*3/4, frame.BLUE)
 		f.SetPixel(WIDTH/2, HEIGHT/2, frame.RED)
 
 	}
