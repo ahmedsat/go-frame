@@ -18,49 +18,38 @@ type Frame struct {
 	BlendPixel blendPixel
 }
 
-func NewFrame(width, height int, set setPixel, get getPixel) (f Frame) {
-	f.height = height
-	f.width = width
-	f.SetPixel = set
-	f.GetPixel = get
-
-	f.BlendPixel = func(x, y int, c1 color.Color) {
-
-		c0_r, c0_g, c0_b, c0_a := f.GetPixel(x, y).RGBA()
-		c1_r, c1_g, c1_b, c1_a := c1.RGBA()
-
-		if c0_a == 0 || c1_a == 0xffff {
-			f.SetPixel(x, y, c1)
-			return
-		}
-
-		r := Int.Lerp(int(c0_r), int(c1_r), int(c1_a), 0xffff)
-		g := Int.Lerp(int(c0_g), int(c1_g), int(c1_a), 0xffff)
-		b := Int.Lerp(int(c0_b), int(c1_b), int(c1_a), 0xffff)
-
-		c := color.RGBA{
-			R: uint8(r),
-			G: uint8(g),
-			B: uint8(b),
-			A: 0xff, //uint8(a),
-		}
-
-		f.SetPixel(x, y, c)
+func NewFrame(width, height int, set setPixel, get getPixel) Frame {
+	return Frame{
+		width:    width,
+		height:   height,
+		SetPixel: set,
+		GetPixel: get,
+		BlendPixel: func(x, y int, c color.Color) {
+			srcR, srcG, srcB, srcA := c.RGBA()
+			dstR, dstG, dstB, _ := get(x, y).RGBA()
+			r := Int.Lerp(int(dstR), int(srcR), int(srcA), 0xffff)
+			g := Int.Lerp(int(dstG), int(srcG), int(srcA), 0xffff)
+			b := Int.Lerp(int(dstB), int(srcB), int(srcA), 0xffff)
+			c = color.RGBA{
+				R: uint8(r),
+				G: uint8(g),
+				B: uint8(b),
+				A: 0xff,
+			}
+			set(x, y, c)
+		},
 	}
-
-	return f
 }
 
-func (f *Frame) Resize(width, height int) {
-	f.height = height
-	f.width = width
+func (f *Frame) Resize(newWidth, newHeight int) {
+	f.width, f.height = newWidth, newHeight
 }
 
-func (f *Frame) UpdateSetPixel(set setPixel) {
+func (f *Frame) UpdateSetPixelMethod(set setPixel) {
 	f.SetPixel = set
 }
 
-func (f *Frame) UpdateGetPixel(get getPixel) {
+func (f *Frame) UpdateGetPixelMethod(get getPixel) {
 	f.GetPixel = get
 }
 
@@ -83,7 +72,7 @@ func (f Frame) drawLineByX(x0, y0, x1, y1 int, color color.Color) {
 	minX := min(x0, x1)
 
 	for dx := minX; dx <= maxX; dx++ {
-		// y = mx + c
+
 		dy := (dx * (y1 - y0) / (x1 - x0)) + (y0 - x0*(y1-y0)/(x1-x0))
 
 		f.BlendPixel(dx, dy, color)
@@ -95,9 +84,6 @@ func (f Frame) drawLineByY(x0, y0, x1, y1 int, color color.Color) {
 	maxY := max(y0, y1)
 	minY := min(y0, y1)
 	for dy := minY; dy <= maxY; dy++ {
-		// y 	= mx + c
-		// mx	= y - c
-		// x = (y - c)/m
 
 		var dx int
 		if x0 == x1 {
@@ -127,7 +113,6 @@ func (f Frame) FillRectangle(x0, y0, x1, y1 int, color color.Color) {
 	for y := minY; y <= maxY; y++ {
 		for x := minX; x <= maxX; x++ {
 			f.BlendPixel(x, y, color)
-			// f.SetPixel(x, y, color)
 		}
 	}
 }
@@ -173,26 +158,19 @@ func (f Frame) DrawTriangle(x1, y1, x2, y2, x3, y3 int, color color.Color) {
 	f.DrawLine(x1, y1, x3, y3, color)
 	f.DrawLine(x3, y3, x2, y2, color)
 }
-func (f Frame) FillTriangle(x1, y1, x2, y2, x3, y3 int, color color.Color) {
-	maxX := max(x1, x2, x3)
-	minX := min(x1, x2, x3)
-	maxY := max(y1, y2, y3)
-	minY := min(y1, y2, y3)
 
-	v1 := Int.Vec2{x1, y1}
-	v2 := Int.Vec2{x2, y2}
-	v3 := Int.Vec2{x3, y3}
+func (f Frame) FillTriangle(ax, ay, bx, by, cx, cy int, color color.Color) {
+	minX, maxX := min(ax, bx, cx), max(ax, bx, cx)
+	minY, maxY := min(ay, by, cy), max(ay, by, cy)
+
+	v1, v2, v3 := Int.Vec2{X: ax, Y: ay}, Int.Vec2{X: bx, Y: by}, Int.Vec2{X: cx, Y: cy}
 
 	for y := minY; y <= maxY; y++ {
 		for x := minX; x <= maxX; x++ {
-			p := Int.Vec2{x, y}
-			t1 := p.RightTo(v1, v2)
-			t2 := p.RightTo(v2, v3)
-			t3 := p.RightTo(v3, v1)
-			if t1 && t2 && t3 {
+			p := Int.Vec2{X: x, Y: y}
+			if p.RightTo(v1, v2) && p.RightTo(v2, v3) && p.RightTo(v3, v1) {
 				f.BlendPixel(x, y, color)
 			}
 		}
 	}
-
 }

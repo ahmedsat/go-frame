@@ -6,6 +6,7 @@ import (
 	"image/color"
 	"image/png"
 	"os"
+	"unsafe"
 
 	"github.com/ahmedsat/go-frame/frame"
 )
@@ -14,6 +15,12 @@ const (
 	WIDTH  = 800
 	HEIGHT = 600
 )
+
+func init() {
+	var i int32
+	fmt.Println(unsafe.Sizeof(i))
+	os.Exit(0)
+}
 
 func main() {
 
@@ -35,9 +42,6 @@ func main() {
 		f.SetPixel(WIDTH/2, HEIGHT/2, frame.RED)
 	}
 
-	// fmt.Println(img)
-
-	//save image
 	file, err := os.Create("img/out.png")
 	if err != nil {
 		fmt.Println(err)
