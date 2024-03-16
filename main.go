@@ -18,16 +18,26 @@ const (
 func main() {
 
 	img := image.NewRGBA(image.Rect(0, 0, WIDTH, HEIGHT))
-	f := frame.NewFrame(WIDTH, HEIGHT, func(x, y int, c color.Color) {
-		img.Set(x, y, c)
-	})
+	f := frame.NewFrame(
+		WIDTH, HEIGHT,
+		func(x, y int, c color.Color) {
+			img.Set(x, y, c)
+		},
+		func(x, y int) color.Color {
+			return img.At(x, y)
+		},
+	)
 
 	{
+
 		f.Fill(frame.WHITE)
 
 		f.SetPixel(WIDTH/2, HEIGHT/2, frame.RED)
 	}
-	// save image
+
+	// fmt.Println(img)
+
+	//save image
 	file, err := os.Create("img/out.png")
 	if err != nil {
 		fmt.Println(err)
@@ -36,3 +46,5 @@ func main() {
 	png.Encode(file, img)
 
 }
+
+// todo: Linear interpolation

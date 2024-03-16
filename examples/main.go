@@ -11,9 +11,15 @@ import (
 
 func CreateImage(width, height int) (*image.RGBA, frame.Frame) {
 	img := image.NewRGBA(image.Rect(0, 0, width, height))
-	f := frame.NewFrame(width, height, func(x, y int, c color.Color) {
-		img.Set(x, y, c)
-	})
+	f := frame.NewFrame(
+		width, height,
+		func(x, y int, c color.Color) {
+			img.Set(x, y, c)
+		},
+		func(x, y int) color.Color {
+			return img.At(x, y)
+		},
+	)
 
 	return img, f
 }
@@ -32,4 +38,5 @@ func main() {
 	rect()
 	circle()
 	triangle()
+	alpha()
 }
